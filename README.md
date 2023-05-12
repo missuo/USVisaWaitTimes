@@ -1,5 +1,5 @@
 # USVisaWaitTimes
-A tool for checking US visa wait times.
+A tool for checking US Visa wait times
 
 ## Usage
 ### Install US-Visa with Homebrew (macOS Only)
