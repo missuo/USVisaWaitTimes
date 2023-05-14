@@ -2,7 +2,7 @@
  * @Author: Vincent Young
  * @Date: 2023-05-12 23:21:03
  * @LastEditors: Vincent Young
- * @LastEditTime: 2023-05-13 00:29:19
+ * @LastEditTime: 2023-05-14 23:25:24
  * @FilePath: /USVisaWaitTimes/main.go
  * @Telegram: https://t.me/missuo
  *
@@ -16,6 +16,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func QueryVisaWaitTimes(cid string) ([]string, error) {
@@ -42,7 +43,7 @@ func main() {
 	flag.Parse()
 
 	visaType := []struct {
-		visaname string
+		visaName string
 	}{
 		{"Interview Required Visitors (B1/B2)"},
 		{"Interview Required Students/Exchange Visitors (F, M, J)"},
@@ -313,9 +314,11 @@ func main() {
 		}
 	} else if *s != "" {
 		var cityCode string
+		var embassyName string
 		for _, item := range embassyInfo {
 			if strings.Contains(strings.ToLower(item.value), strings.ToLower(*s)) {
 				cityCode = item.code
+				embassyName = item.value
 				break
 			}
 		}
@@ -327,13 +330,15 @@ func main() {
 		if err != nil {
 			fmt.Printf("Error: %s\n", err)
 		} else {
+			now := time.Now()
+			fmt.Printf("Embassy: %s \nTime: %s\n\n", embassyName, now.Format("2006-01-02 15:04:05"))
 			for i := 0; i < len(result); i++ {
 				waitTime := strings.Replace(result[i], "Days", " Calendar Days", -1)
 				waitTime = strings.Replace(waitTime, "SameDay", "Same Day", -1)
-				fmt.Printf("%s: %s\n", visaType[i].visaname, waitTime)
+				fmt.Printf("%s: %s\n", visaType[i].visaName, waitTime)
 			}
 		}
-		fmt.Printf("\nMade with \033[31m♥\033[0m by Vincent.\nData from https://travel.state.gov\nGitHub: https://github.com/missuo/USVisaWaitTimes\n")
+		fmt.Printf("\nData From: https://travel.state.gov\nGitHub: https://github.com/missuo/USVisaWaitTimes\n\nMade with \033[31m♥\033[0m by Vincent\n")
 	} else {
 		fmt.Println("Error: Must specify either -l or -s flag.")
 	}
